@@ -1,0 +1,47 @@
+form {
+    width: 50vw;
+    min-width: max-content;
+
+    display: grid;
+    grid-template-columns: max-content auto;
+    grid-template-rows: max-content max-content max-content max-content;
+}
+
+form > label {
+    grid-column: 1 / 2;
+    justify-self: end;
+}
+
+form > input {
+    grid-column: 2 / 3;
+    justify-self: start;
+}
+
+form > label[for=confluence-login-form-url] {
+    grid-row: 1 / 2;
+}
+
+form > label[for=confluence-login-form-username] {
+    grid-row: 2 / 3;
+}
+
+form > label[for=confluence-login-form-password] {
+    grid-row: 3 / 4;
+}
+
+form > input#confluence-login-form-url {
+    grid-row: 1 / 2;
+}
+
+form > input#confluence-login-form-username {
+    grid-row: 2 / 3;
+}
+
+form > input#confluence-login-form-password {
+    grid-row: 3 / 4;
+}
+
+form > input[type=submit] {
+    grid-column: 1 / 3;
+    grid-row: 4 / 5;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <title>Root Content</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<h1>Root Content</h1>
+<form method="post" action="/copy">
+    <ul>
+        <% spaceContent.page.results.forEach(function(content) { %>
+            <li>
+                <%- include("_contentCard", {content: content}); %>
+            </li>
+        <% }) %>
+    </ul>
+    <label for="other-confluence-url">Confluence URL to copy to: </label>
+    <input type="url" id="other-confluence-url" name="url">
+    <label for="other-confluence-username">Username for other Confluence: </label>
+    <input type="text" id="other-confluence-username" name="username">
+    <label for="other-confluence-password">Password for other Confluence: </label>
+    <input type="password" id="other-confluence-password" name="password">
+    <label for="other-confluence-space-key">Destination space key: </label>
+    <input type="text" id="other-confluence-space-key" name="spaceKey">
+
+    <input type="submit" value="Copy">
+</form>
+<script src="/expandContent.js"></script>
+</body>
+</html>

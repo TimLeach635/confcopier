@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <title>Spaces</title>
+</head>
+<body>
+<h1>Spaces</h1>
+<ul>
+    <% spaceArray.results.forEach(function(space) { %>
+        <li>
+            <a href="/space/<%= space.key %>"><h2><%= space.name %></h2></a>
+            <p>Key: "<%= space.key %>"</p>
+            <p>Type: "<%= space.type %>"</p>
+        </li>
+    <% }) %>
+</ul>
+</body>
+</html>

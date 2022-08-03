@@ -1,0 +1,5 @@
+<div id="content-<%= content.id %>" class="content-card">
+    <input id="checkbox-content-<%= content.id %>" name="<%= content.id %>" type="checkbox">
+    <label for="checkbox-content-<%= content.id %>"><%= content.title %></label>
+    <button type="button" onclick="expandContent(<%= content.id %>)">Expand</button>
+</div>
