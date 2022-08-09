@@ -107,7 +107,7 @@ app.post("/copy", (req, res) => {
   // Extract IDs of pages to copy
   const ids: string[] = Object
     .keys(req.body)
-    .filter(key => !["url", "username", "password", "spaceKey"].includes(key));
+    .filter(key => !["url", "username", "password", "spaceKey", "destinationContentRoot"].includes(key));
 
   const destConfluence: Confluence = {
     url: req.body.url,
@@ -115,8 +115,13 @@ app.post("/copy", (req, res) => {
     password: req.body.password,
   };
 
-  copyContent(req.session.confluence, destConfluence, req.body.spaceKey, ids)
-    .then((response) => {
+  copyContent(
+    req.session.confluence,
+    destConfluence,
+    req.body.spaceKey,
+    ids,
+    req.body.destinationContentRoot || undefined
+  ).then((response) => {
       res.send(JSON.stringify(response));
     }, (reason) => {
       res.status(500).send(reason.message);

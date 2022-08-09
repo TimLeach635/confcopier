@@ -90,6 +90,8 @@ const confluenceFetch = (
       .join("&");
   }
 
+  console.log(`Making GET request to ${url}`);
+
   return fetch(url, {
     headers: {
       "X-Atlassian-Token": "no-check",
@@ -114,6 +116,8 @@ const confluencePost = (
       .map((key) => `${key}=${queryParams[key]}`)
       .join("&");
   }
+
+  console.log(`Making POST request to ${url}`);
 
   return fetch(url, {
     method: "POST",
@@ -282,7 +286,8 @@ export const copyContent = async (
   sourceConfluence: Confluence,
   destinationConfluence: Confluence,
   destinationSpaceKey: string,
-  contentIds: string[]
+  contentIds: string[],
+  destinationParentId?: string
 ): Promise<Content[]> => {
   // Get all the content selected
   const contentArray = await searchContent(
@@ -292,6 +297,12 @@ export const copyContent = async (
     contentIds.length
   );
   const content = contentArray.results;
+
+  let destinationParent: Content | undefined;
+
+  if (destinationParentId !== undefined) {
+    destinationParent = await getContentDetails(destinationConfluence, destinationParentId);
+  }
 
   // Begin with those with no parent, and cascade down
   // TODO: Will probably fail if a page is selected but any of its ancestors aren't
@@ -337,7 +348,8 @@ export const copyContent = async (
                   prevOutput.id
                 );
               }
-            }
+            },
+            destinationParent
           ),
         };
       })
