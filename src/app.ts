@@ -7,10 +7,8 @@ import {
   getGlobalSpaces,
   getSpaceRootContent
 } from "./client/confluenceClient";
-import React from "react";
-import { renderToString } from "react-dom/server";
-import { HtmlDocument } from "./components/html/HtmlDocument";
 import { LoginPage } from "./components/login/LoginPage";
+import { renderHtml } from "./rendering";
 
 const port = 3000;
 
@@ -39,14 +37,7 @@ app.use((req, res, next) => {
   }
 
   if (!req.session?.confluence) {
-    res.send(`
-    <!DOCTYPE html>
-    ${renderToString(
-      <HtmlDocument title="ConfCopier | Log In">
-        <LoginPage />
-      </HtmlDocument>
-    )}
-    `);
+    res.send(renderHtml(LoginPage, "ConfCopier | Log In"));
     res.end();
     return;
   }

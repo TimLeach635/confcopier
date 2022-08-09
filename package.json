@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/app.tsx --bundle --sourcemap --platform=node --outfile=dist/app.js",
+    "build": "esbuild src/app.ts --bundle --sourcemap --platform=node --outfile=dist/app.js",
     "build-and-run": "npm run build && npm run start",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
