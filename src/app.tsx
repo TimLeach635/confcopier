@@ -7,6 +7,10 @@ import {
   getGlobalSpaces,
   getSpaceRootContent
 } from "./client/confluenceClient";
+import React from "react";
+import { renderToString } from "react-dom/server";
+import { HtmlDocument } from "./components/html/HtmlDocument";
+import { LoginPage } from "./components/login/LoginPage";
 
 const port = 3000;
 
@@ -26,12 +30,31 @@ app.use(cookieSession({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
 
-app.get("/", (req, res) => {
-  if (!req.session?.confluence) {
-    res.render("login");
+// Redirect to login page if the confluence details are not present in
+// the session cookie (or that cookie doesn't exist at all)
+app.use((req, res, next) => {
+  if (req.method !== "GET") {
+    next();
     return;
   }
 
+  if (!req.session?.confluence) {
+    res.send(`
+    <!DOCTYPE html>
+    ${renderToString(
+      <HtmlDocument title="ConfCopier | Log In">
+        <LoginPage />
+      </HtmlDocument>
+    )}
+    `);
+    res.end();
+    return;
+  }
+
+  next();
+});
+
+app.get("/", (req, res) => {
   getGlobalSpaces(req.session.confluence)
     .then((response) => {
       res.render("spaces", { spaceArray: response });
@@ -41,11 +64,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/space/:spaceKey", (req, res) => {
-  if (!req.session?.confluence) {
-    res.render("login");
-    return;
-  }
-
   getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
     .then((response) => {
       res.render("content", { spaceContent: response });
@@ -55,11 +73,6 @@ app.get("/space/:spaceKey", (req, res) => {
 });
 
 app.get("/content/:contentId/children", (req, res) => {
-  if (!req.session?.confluence) {
-    res.render("login");
-    return;
-  }
-
   getChildrenOfContent(req.session.confluence, req.params["contentId"])
     .then((response) => {
       res.send(response);
