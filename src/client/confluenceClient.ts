@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { flatten, makeTrees, traversePromiseTree, Tree } from "../util/tree";
+import { flatten, makeTrees, traversePromiseTree, Tree, visualiseTreeArray } from "../util/tree";
 
 export interface Confluence {
   url: string;
@@ -221,8 +221,14 @@ export const getSpaceRootContent = async (
     ["wiki", "rest", "api", "space", spaceKey, "content"],
     { depth: "root", expand: "children.page" }
   );
-  if (!response.ok)
-    throw new Error(`Fetch failed with error:\n${response.body}`);
+  if (!response.ok) {
+    if (response.status === 404) {
+      const errorObject: any = await response.json();
+      const message: string = errorObject.message;
+      throw new Error(`Fetch failed with error:\n${message}`);
+    }
+    throw new Error(`Fetch failed with error:\n${JSON.stringify(await response.json())}`);
+  }
   return (await response.json()) as SpaceContentResponse;
 };
 
@@ -247,7 +253,12 @@ export const createContent = async (
   };
 
   if (parentId !== undefined) {
+    console.log(
+      `Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}, as a child of page ${parentId}`
+    );
     request.ancestors.push({ id: parentId });
+  } else {
+    console.log(`Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}`);
   }
 
   const response = await confluencePost(
@@ -258,9 +269,13 @@ export const createContent = async (
 
   if (!response.ok) {
     const body = await response.json();
+    console.error(`Failed to create page "${title}"`);
+    console.error(JSON.stringify(body, null, 2));
     throw new Error(`Fetch failed with error:\n${JSON.stringify(body)}`);
   }
-  return (await response.json()) as Content;
+  const createdContent: Content = await response.json() as Content;
+  console.log(`Successfully created page "${title}" at ${createdContent._links.self}`);
+  return createdContent;
 };
 
 export const copyContent = async (
@@ -292,32 +307,50 @@ export const copyContent = async (
         .includes(potentialChild.id)
   );
 
-  const creationTrees: Tree<Content>[] = await Promise.all(
-    contentTrees.map(async (contentTree) => {
-      return {
-        root: await traversePromiseTree<Content, Content>(
-          contentTree.root,
-          (nodeValue: Content, prevOutput?: Content) => {
-            if (prevOutput === undefined) {
-              return createContent(
-                destinationConfluence,
-                nodeValue.title,
-                destinationSpaceKey,
-                nodeValue.body.storage.value
-              );
-            } else {
-              return createContent(
-                destinationConfluence,
-                nodeValue.title,
-                destinationSpaceKey,
-                nodeValue.body.storage.value,
-                prevOutput.id
-              );
+  console.log(`Attempting to copy content trees from ${sourceConfluence.url}:`);
+  visualiseTreeArray(
+    contentTrees,
+    item => item.title
+  );
+
+  let creationTrees: Tree<Content>[];
+  try {
+    creationTrees = await Promise.all(
+      contentTrees.map(async (contentTree) => {
+        return {
+          root: await traversePromiseTree<Content, Content>(
+            contentTree.root,
+            (nodeValue: Content, prevOutput?: Content) => {
+              if (prevOutput === undefined) {
+                return createContent(
+                  destinationConfluence,
+                  nodeValue.title,
+                  destinationSpaceKey,
+                  nodeValue.body.storage.value
+                );
+              } else {
+                return createContent(
+                  destinationConfluence,
+                  nodeValue.title,
+                  destinationSpaceKey,
+                  nodeValue.body.storage.value,
+                  prevOutput.id
+                );
+              }
             }
-          }
-        ),
-      };
-    })
+          ),
+        };
+      })
+    );
+  } catch (e) {
+    console.error(`Failed to copy pages`);
+    console.error(JSON.stringify(e, null, 2));
+  }
+
+  console.log(`Successfully copied all pages`);
+  visualiseTreeArray(
+    creationTrees,
+    item => `${item.title} (${item._links.self})`
   );
 
   return creationTrees.flatMap(creationTree => flatten(creationTree.root));

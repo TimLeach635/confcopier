@@ -68,7 +68,18 @@ app.get("/space/:spaceKey", (req, res) => {
     .then((response) => {
       res.render("content", { spaceContent: response });
     }, (reason) => {
-      res.status(500).send(`<p>${reason}</p>`);
+      res.status(500).send(`
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <title>Error</title>
+</head>
+<body>
+  <h1>Internal Server Error</h1>
+  <p>${reason.message}</p>
+</body>
+</html>
+`);
     });
 });
 
@@ -108,7 +119,7 @@ app.post("/copy", (req, res) => {
     .then((response) => {
       res.send(JSON.stringify(response));
     }, (reason) => {
-      res.status(500).send(JSON.stringify(reason));
+      res.status(500).send(reason.message);
     });
 })
 

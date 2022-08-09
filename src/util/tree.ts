@@ -108,3 +108,36 @@ export const flatten = <T>(tree: TreeNode<T>): T[] => {
 
   return result;
 }
+
+export const visualiseNode = <T>(
+  tree: TreeNode<T>,
+  display: (item: T) => string,
+  startPrefix: string,
+  continuePrefix: string
+): void => {
+  console.log(`${startPrefix}${display(tree.value)}`);
+  for (let i = 0; i < tree.children.length; i++) {
+    const childNode = tree.children[i];
+
+    if (i !== tree.children.length - 1) {
+      visualiseNode(childNode, display, `${continuePrefix}├───`, `${continuePrefix}│   `);
+    } else {
+      visualiseNode(childNode, display, `${continuePrefix}└───`, `${continuePrefix}    `);
+    }
+  }
+}
+
+export const visualiseTreeArray = <T>(
+  trees: Tree<T>[],
+  display: (item: T) => string
+): void => {
+  const maxNDigits = Math.floor(Math.log10(trees.length)) + 1;
+  trees.forEach((tree, index) => {
+    visualiseNode(
+      tree.root,
+      display,
+      `${index + 1}: `.padStart(maxNDigits + 2, " "),
+      `${index + 1}  `.padStart(maxNDigits + 2, " ")
+    );
+  });
+}
