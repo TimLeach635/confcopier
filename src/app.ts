@@ -16,9 +16,6 @@ const port = 3000;
 
 const app = express();
 
-app.set("view engine", "ejs");
-app.set("views", "views");
-
 const key = process.env["KEY"];
 if (!key) throw new Error("Environment variable \"KEY\" must be set");
 
