@@ -1,5 +1,6 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
+import { Header } from "./components/header/Header";
 
 export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, props?: T): string => {
   return `
@@ -16,6 +17,7 @@ export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, p
   <link rel="stylesheet" href="/login.css" />
 </head>
 <body>
+  ${renderToString(React.createElement(Header))}
   ${renderToString(React.createElement(Body, props))}
 </body>
 </html>
