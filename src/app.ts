@@ -9,6 +9,8 @@ import {
 } from "./client/confluenceClient";
 import { LoginPage } from "./components/login/LoginPage";
 import { renderHtml } from "./rendering";
+import { ContentTreePage } from "./components/content/ContentTreePage";
+import { SpaceListPage } from "./components/spaces/SpaceListPage";
 
 const port = 3000;
 
@@ -48,7 +50,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   getGlobalSpaces(req.session.confluence)
     .then((response) => {
-      res.render("spaces", { spaceArray: response });
+      res.send(renderHtml(SpaceListPage, "ConfCopier | Spaces", { spaces: response.results }));
     }, (reason) => {
       res.status(500).send(`<p>${reason}</p>`);
     });
@@ -57,7 +59,9 @@ app.get("/", (req, res) => {
 app.get("/space/:spaceKey", (req, res) => {
   getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
     .then((response) => {
-      res.render("content", { spaceContent: response });
+      res.send(renderHtml(ContentTreePage, "ConfCopier | Content", {
+        contentList: response.page.results,
+      }));
     }, (reason) => {
       res.status(500).send(`
 <!DOCTYPE html>

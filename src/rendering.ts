@@ -1,7 +1,7 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
 
-export const renderHtml = (Body: React.FunctionComponent, title: string): string => {
+export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, props?: T): string => {
   return `
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -16,7 +16,7 @@ export const renderHtml = (Body: React.FunctionComponent, title: string): string
   <link rel="stylesheet" href="/login.css" />
 </head>
 <body>
-  ${renderToString(React.createElement(Body))}
+  ${renderToString(React.createElement(Body, props))}
 </body>
 </html>
   `;
