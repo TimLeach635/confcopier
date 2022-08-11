@@ -10,7 +10,7 @@ export const SpaceListPage: React.FunctionComponent<SpaceListPageProps> = ({ spa
     <h1>Spaces</h1>
     <ul>
       {spaces.map(space =>
-        <li>
+        <li key={space.key}>
           <a href={`/space/${space.key}`}>
             <h2>{space.name}</h2>
           </a>

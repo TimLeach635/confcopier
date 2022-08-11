@@ -2,7 +2,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { Header } from "./components/header/Header";
 
-export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, props?: T): string => {
+export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, props?: T, serverData?: any): string => {
   return `
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -15,6 +15,7 @@ export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, p
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/login.css" />
+  <script>globalThis.SERVER_DATA = ${JSON.stringify(serverData)}</script>
 </head>
 <body>
   ${renderToString(React.createElement(Header))}

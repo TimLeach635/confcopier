@@ -1,22 +1,18 @@
 import React from "react";
 import { Content } from "../../client/confluenceClient";
-import { ContentCard } from "./ContentCard";
+import { ContentTrees } from "./ContentTrees";
 
 interface ContentTreePageProps {
-  contentList: Content[];
+  rootContent: Content[];
 }
 
-export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({ contentList }) => {
+export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({ rootContent }) => {
   return <>
     <h1>Root Content</h1>
     <form method="post" action="/copy">
-      <ul>
-        {contentList.map(content =>
-          <li>
-            <ContentCard content={content} />
-          </li>
-        )}
-      </ul>
+      <div id="content-tree-root">
+        <ContentTrees rootContent={rootContent} />
+      </div>
       <label htmlFor="other-confluence-url">Confluence URL to copy to: </label>
       <input type="url" id="other-confluence-url" name="url" />
       <label htmlFor="other-confluence-username">Username for other Confluence: </label>
@@ -28,7 +24,7 @@ export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({
       <label htmlFor="other-confluence-content-root">Destination root content page ID: </label>
       <input type="text" id="other-confluence-content-root" name="destinationContentRoot" />
       <input type="submit" value="Copy" />
+      <script src="/hydrateContentTree.js"></script>
     </form>
-    <script src="/expandContent.js"></script>
   </>
 }

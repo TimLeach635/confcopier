@@ -26,6 +26,7 @@ app.use(cookieSession({
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
+app.use(express.static("dist/static"));
 
 // Redirect to login page if the confluence details are not present in
 // the session cookie (or that cookie doesn't exist at all)
@@ -57,8 +58,8 @@ app.get("/space/:spaceKey", (req, res) => {
   getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
     .then((response) => {
       res.send(renderHtml(ContentTreePage, "ConfCopier | Content", {
-        contentList: response.page.results,
-      }));
+        rootContent: response.page.results,
+      }, { rootContent: response.page.results }));
     }, (reason) => {
       res.status(500).send(`
 <!DOCTYPE html>
@@ -74,6 +75,26 @@ app.get("/space/:spaceKey", (req, res) => {
 `);
     });
 });
+
+app.get("/space/:spaceKey/root-pages", (req, res) => {
+  getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
+    .then((response) => {
+      res.send(response.page.results);
+    }, (reason) => {
+      res.status(500).send(`
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <title>Error</title>
+</head>
+<body>
+  <h1>Internal Server Error</h1>
+  <p>${reason.message}</p>
+</body>
+</html>
+`);
+    });
+})
 
 app.get("/content/:contentId/children", (req, res) => {
   getChildrenOfContent(req.session.confluence, req.params["contentId"])

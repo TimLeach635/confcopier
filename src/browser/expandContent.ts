@@ -1,4 +1,4 @@
-export const expandContent = (contentId: string) => {
+export function expandContent(contentId) {
   fetch(`/content/${contentId}/children`)
     .then((response) => response.json())
     .then((response) => {

@@ -18,6 +18,12 @@ export interface ContentBody {
   representation: string;
 }
 
+export interface ReducedContent {
+  id: string;
+  title: string;
+  parentId?: string;
+}
+
 export interface Content {
   id: string;
   type: "page" | "blogpost" | "attachment" | "content";
@@ -223,7 +229,7 @@ export const getSpaceRootContent = async (
   const response = await confluenceFetch(
     confluence,
     ["wiki", "rest", "api", "space", spaceKey, "content"],
-    { depth: "root", expand: "children.page" }
+    { depth: "root", expand: "children.page", limit: "1000" }
   );
   if (!response.ok) {
     if (response.status === 404) {
