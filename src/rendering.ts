@@ -13,8 +13,9 @@ export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, p
   <meta name="keywords" content="Atlassian, Confluence" />
   <meta name="author" content="Tim Leach" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/login.css" />
+  <link type="text/css" rel="stylesheet" href="/styles.css" />
+  <link type="text/css" rel="stylesheet" href="/login.css" />
+  <link type="text/css" rel="stylesheet" href="/header.css" />
   <script>globalThis.SERVER_DATA = ${JSON.stringify(serverData)}</script>
 </head>
 <body>
