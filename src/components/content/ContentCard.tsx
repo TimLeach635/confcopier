@@ -10,7 +10,7 @@ export const ContentCard: React.FunctionComponent<ContentCardProps> = ({ content
 
   const expandContent: React.MouseEventHandler = (e) => {
     e.preventDefault();
-    fetch(`/content/${content.id}/children`)
+    fetch(`/api/content/${content.id}/children`)
       .then((response) => response.json())
       .then((body: Content[]) => {
         setChildren(body);
