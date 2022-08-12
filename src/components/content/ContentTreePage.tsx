@@ -9,7 +9,7 @@ interface ContentTreePageProps {
 export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({ rootContent }) => {
   return <>
     <h1>Root Content</h1>
-    <form method="post" action="/copy">
+    <form method="post" action="/api/copy">
       <div id="content-tree-root">
         <ContentTrees rootContent={rootContent} />
       </div>

@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { flatten, makeTrees, traversePromiseTree, Tree, visualiseTreeArray } from "../util/tree";
+import logger from "../logging";
 
 export interface Confluence {
   url: string;
@@ -96,7 +97,7 @@ const confluenceFetch = (
       .join("&");
   }
 
-  console.log(`Making GET request to ${url}`);
+  logger.debug(`Making GET request to ${url}`);
 
   return fetch(url, {
     headers: {
@@ -123,7 +124,7 @@ const confluencePost = (
       .join("&");
   }
 
-  console.log(`Making POST request to ${url}`);
+  logger.debug(`Making POST request to ${url}`);
 
   return fetch(url, {
     method: "POST",
@@ -263,12 +264,12 @@ export const createContent = async (
   };
 
   if (parentId !== undefined) {
-    console.log(
+    logger.debug(
       `Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}, as a child of page ${parentId}`
     );
     request.ancestors.push({ id: parentId });
   } else {
-    console.log(`Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}`);
+    logger.debug(`Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}`);
   }
 
   const response = await confluencePost(
@@ -279,12 +280,12 @@ export const createContent = async (
 
   if (!response.ok) {
     const body = await response.json();
-    console.error(`Failed to create page "${title}"`);
-    console.error(JSON.stringify(body, null, 2));
+    logger.error(`Failed to create page "${title}"`);
+    logger.error(JSON.stringify(body, null, 2));
     throw new Error(`Fetch failed with error:\n${JSON.stringify(body)}`);
   }
   const createdContent: Content = await response.json() as Content;
-  console.log(`Successfully created page "${title}" at ${createdContent._links.self}`);
+  logger.debug(`Successfully created page "${title}" at ${createdContent._links.self}`);
   return createdContent;
 };
 
@@ -324,7 +325,7 @@ export const copyContent = async (
         .includes(potentialChild.id)
   );
 
-  console.log(`Attempting to copy content trees from ${sourceConfluence.url}:`);
+  logger.info(`Attempting to copy content trees from ${sourceConfluence.url}:`);
   visualiseTreeArray(
     contentTrees,
     item => item.title
@@ -361,11 +362,11 @@ export const copyContent = async (
       })
     );
   } catch (e) {
-    console.error(`Failed to copy pages`);
-    console.error(JSON.stringify(e, null, 2));
+    logger.error(`Failed to copy pages`);
+    logger.error(JSON.stringify(e, null, 2));
   }
 
-  console.log(`Successfully copied all pages`);
+  logger.info(`Successfully copied all pages`);
   visualiseTreeArray(
     creationTrees,
     item => `${item.title} (${item._links.self})`
