@@ -1,5 +1,5 @@
 import express from "express";
-import { getGlobalSpaces, getSpaceRootContent } from "../client/confluenceClient";
+import { getGlobalSpaces, getSpaceRootContent } from "../apiClients/confluenceClient";
 import { renderHtml } from "../rendering";
 import { ContentTreePage } from "../components/content/ContentTreePage";
 import { SpaceListPage } from "../components/spaces/SpaceListPage";

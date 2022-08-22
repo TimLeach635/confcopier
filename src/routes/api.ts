@@ -1,5 +1,5 @@
 import express from "express";
-import { Confluence, copyContent, getChildrenOfContent, getSpaceRootContent } from "../client/confluenceClient";
+import { Confluence, copyContent, getChildrenOfContent, getSpaceRootContent } from "../apiClients/confluenceClient";
 
 const router = express.Router();
 

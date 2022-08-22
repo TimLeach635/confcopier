@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Content } from "../../client/confluenceClient";
+import { Content } from "../../apiClients/confluenceClient";
 
 interface ContentCardProps {
   content: Content;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Content } from "../../client/confluenceClient";
+import { Content } from "../../apiClients/confluenceClient";
 import { ContentTrees } from "./ContentTrees";
 
 interface ContentTreePageProps {

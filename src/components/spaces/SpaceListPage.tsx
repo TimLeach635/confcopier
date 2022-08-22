@@ -1,5 +1,5 @@
 import React from "react";
-import { Space } from "../../client/confluenceClient";
+import { Space } from "../../apiClients/confluenceClient";
 
 interface SpaceListPageProps {
   spaces: Space[];
