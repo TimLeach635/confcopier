@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Content } from "../../apiClients/confluenceClient";
+import { Content } from "../../apiClients/confluence/content";
 
 interface ContentCardProps {
   content: Content;
 }
 
-export const ContentCard: React.FunctionComponent<ContentCardProps> = ({ content }) => {
+export const ContentCard: React.FunctionComponent<ContentCardProps> = ({
+  content,
+}) => {
   const [children, setChildren] = useState<Content[]>();
 
   const expandContent: React.MouseEventHandler = (e) => {
@@ -14,26 +16,38 @@ export const ContentCard: React.FunctionComponent<ContentCardProps> = ({ content
       .then((response) => response.json())
       .then((body: Content[]) => {
         setChildren(body);
-      })
-  }
+      });
+  };
 
   let childrenOrButton: React.ReactNode = <></>;
 
   if (children === undefined) {
-    childrenOrButton = <button type="button" onClick={expandContent}>Expand</button>
+    childrenOrButton = (
+      <button type="button" onClick={expandContent}>
+        Expand
+      </button>
+    );
   } else if (children.length > 0) {
-    childrenOrButton = <ul>
-      {children.map((child) => <li key={child.id}>
-        <ContentCard content={child} />
-      </li>)}
-    </ul>
+    childrenOrButton = (
+      <ul>
+        {children.map((child) => (
+          <li key={child.id}>
+            <ContentCard content={child} />
+          </li>
+        ))}
+      </ul>
+    );
   }
 
-  return <div id={`content-${content.id}`} className="content-card">
-    <input id={`checkbox-content-${content.id}`} name={`${content.id}`} type="checkbox" />
-      <label htmlFor={`checkbox-content-${content.id}`}>
-        {content.title}
-      </label>
+  return (
+    <div id={`content-${content.id}`} className="content-card">
+      <input
+        id={`checkbox-content-${content.id}`}
+        name={`${content.id}`}
+        type="checkbox"
+      />
+      <label htmlFor={`checkbox-content-${content.id}`}>{content.title}</label>
       {childrenOrButton}
-  </div>;
-}
+    </div>
+  );
+};

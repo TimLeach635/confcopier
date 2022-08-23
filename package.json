@@ -6,6 +6,8 @@
   "scripts": {
     "build": "node ./build.js",
     "build-and-run": "npm run build && npm run start",
+    "prettier": "prettier --write ./src",
+    "prettier-check": "prettier --check ./src",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

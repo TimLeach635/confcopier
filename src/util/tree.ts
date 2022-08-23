@@ -13,7 +13,10 @@ export const populateChildren = <T>(
   isParent: (potentialParent: T, potentialChild: T) => boolean
 ): void => {
   for (let option of options) {
-    if (isParent(rootNode.value, option) && !rootNode.children.some(child => child.value === option)) {
+    if (
+      isParent(rootNode.value, option) &&
+      !rootNode.children.some((child) => child.value === option)
+    ) {
       const newChild: TreeNode<T> = {
         value: option,
         children: [],
@@ -22,27 +25,39 @@ export const populateChildren = <T>(
       rootNode.children.push(newChild);
     }
   }
-}
+};
+
+export const generateTreeAsync = async <T>(
+  parent: T,
+  getChildren: (parent: T) => Promise<T[]>
+): Promise<TreeNode<T>> => {
+  const children: T[] = await getChildren(parent);
+  const childTreePromises: Promise<TreeNode<T>>[] = children.map((child) =>
+    generateTreeAsync<T>(child, getChildren)
+  );
+
+  return {
+    value: parent,
+    children: await Promise.all(childTreePromises),
+  };
+};
 
 export const makeTrees = <T>(
   items: T[],
   isParent: (potentialParent: T, potentialChild: T) => boolean
 ): Tree<T>[] => {
   // find the items without parents
-  const roots: T[] = items
-    .filter(item => {
-      return !items.some(testItem => isParent(testItem, item));
-    });
+  const roots: T[] = items.filter((item) => {
+    return !items.some((testItem) => isParent(testItem, item));
+  });
 
   // begin trees
-  const trees: Tree<T>[] = roots.map(
-    root => ({
-      root: {
-        value: root,
-        children: [],
-      },
-    })
-  );
+  const trees: Tree<T>[] = roots.map((root) => ({
+    root: {
+      value: root,
+      children: [],
+    },
+  }));
 
   // add children
   for (let tree of trees) {
@@ -50,7 +65,7 @@ export const makeTrees = <T>(
   }
 
   return trees;
-}
+};
 
 export const traverseTree = <T, U>(
   root: TreeNode<T>,
@@ -67,7 +82,7 @@ export const traverseTree = <T, U>(
 
   const result: TreeNode<U> = {
     value: rootResult,
-    children: []
+    children: [],
   };
 
   for (let child of root.children) {
@@ -75,7 +90,7 @@ export const traverseTree = <T, U>(
   }
 
   return result;
-}
+};
 
 export const traversePromiseTree = async <T, U>(
   root: TreeNode<T>,
@@ -92,7 +107,7 @@ export const traversePromiseTree = async <T, U>(
 
   const result: TreeNode<U> = {
     value: rootResult,
-    children: []
+    children: [],
   };
 
   for (let child of root.children) {
@@ -100,14 +115,14 @@ export const traversePromiseTree = async <T, U>(
   }
 
   return result;
-}
+};
 
 export const flatten = <T>(tree: TreeNode<T>): T[] => {
   const result: T[] = [tree.value];
   [tree.value].push(...tree.children.flatMap(flatten));
 
   return result;
-}
+};
 
 export const visualiseNode = <T>(
   tree: TreeNode<T>,
@@ -120,12 +135,22 @@ export const visualiseNode = <T>(
     const childNode = tree.children[i];
 
     if (i !== tree.children.length - 1) {
-      visualiseNode(childNode, display, `${continuePrefix}├───`, `${continuePrefix}│   `);
+      visualiseNode(
+        childNode,
+        display,
+        `${continuePrefix}├───`,
+        `${continuePrefix}│   `
+      );
     } else {
-      visualiseNode(childNode, display, `${continuePrefix}└───`, `${continuePrefix}    `);
+      visualiseNode(
+        childNode,
+        display,
+        `${continuePrefix}└───`,
+        `${continuePrefix}    `
+      );
     }
   }
-}
+};
 
 export const visualiseTreeArray = <T>(
   trees: Tree<T>[],
@@ -140,4 +165,4 @@ export const visualiseTreeArray = <T>(
       `${index + 1}  `.padStart(maxNDigits + 2, " ")
     );
   });
-}
+};

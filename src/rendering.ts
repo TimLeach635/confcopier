@@ -2,7 +2,12 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { Header } from "./components/header/Header";
 
-export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, props?: T, serverData?: any): string => {
+export const renderHtml = <T>(
+  Body: React.FunctionComponent<T>,
+  title: string,
+  props?: T,
+  serverData?: any
+): string => {
   return `
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -24,4 +29,4 @@ export const renderHtml = <T>(Body: React.FunctionComponent<T>, title: string, p
 </body>
 </html>
   `;
-}
+};

@@ -1,9 +1,12 @@
 import express from "express";
-import { getGlobalSpaces, getSpaceRootContent } from "../apiClients/confluenceClient";
 import { renderHtml } from "../rendering";
 import { ContentTreePage } from "../components/content/ContentTreePage";
 import { SpaceListPage } from "../components/spaces/SpaceListPage";
 import { LoginPage } from "../components/login/LoginPage";
+import {
+  getGlobalSpaces,
+  getSpaceRootContent,
+} from "../apiClients/confluence/space";
 
 const router = express.Router();
 
@@ -25,21 +28,35 @@ router.use((req, res, next) => {
 });
 
 router.get("/", (req, res) => {
-  getGlobalSpaces(req.session.confluence)
-    .then((response) => {
-      res.send(renderHtml(SpaceListPage, "ConfCopier | Spaces", { spaces: response.results }));
-    }, (reason) => {
+  getGlobalSpaces(req.session.confluence).then(
+    (response) => {
+      res.send(
+        renderHtml(SpaceListPage, "ConfCopier | Spaces", {
+          spaces: response.results,
+        })
+      );
+    },
+    (reason) => {
       res.status(500).send(`<p>${reason}</p>`);
-    });
+    }
+  );
 });
 
 router.get("/space/:spaceKey", (req, res) => {
-  getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
-    .then((response) => {
-      res.send(renderHtml(ContentTreePage, "ConfCopier | Content", {
-        rootContent: response.page.results,
-      }, { rootContent: response.page.results }));
-    }, (reason) => {
+  getSpaceRootContent(req.session.confluence, req.params["spaceKey"]).then(
+    (response) => {
+      res.send(
+        renderHtml(
+          ContentTreePage,
+          "ConfCopier | Content",
+          {
+            rootContent: response.page.results,
+          },
+          { rootContent: response.page.results }
+        )
+      );
+    },
+    (reason) => {
       res.status(500).send(`
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -52,7 +69,8 @@ router.get("/space/:spaceKey", (req, res) => {
 </body>
 </html>
 `);
-    });
+    }
+  );
 });
 
 router.post("/", (req, res) => {
