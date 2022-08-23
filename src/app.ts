@@ -25,3 +25,5 @@ app.use("/", pageRoutes);
 app.use("/api", apiRoutes);
 
 app.listen(port);
+
+export default app;
