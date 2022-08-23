@@ -6,7 +6,11 @@ import { LoginPage } from "../components/login/LoginPage";
 import {
   getGlobalSpaces,
   getSpaceRootContent,
+  SpaceContentResponse,
 } from "../apiClients/confluence/space";
+import { Content } from "../apiClients/confluence/content";
+import { getWholeHierarchyFromParent } from "../services/confluence/contentService";
+import { TreeNode } from "../util/tree";
 
 const router = express.Router();
 
@@ -43,21 +47,30 @@ router.get("/", (req, res) => {
 });
 
 router.get("/space/:spaceKey", (req, res) => {
-  getSpaceRootContent(req.session.confluence, req.params["spaceKey"]).then(
-    (response) => {
-      res.send(
-        renderHtml(
-          ContentTreePage,
-          "ConfCopier | Content",
-          {
-            rootContent: response.page.results,
-          },
-          { rootContent: response.page.results }
+  getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
+    .then((response: SpaceContentResponse) => {
+      const rootPages: Content[] = response.page.results;
+      return Promise.all(
+        rootPages.map((rootPage) =>
+          getWholeHierarchyFromParent(req.session.confluence, rootPage.id)
         )
       );
-    },
-    (reason) => {
-      res.status(500).send(`
+    })
+    .then(
+      (hierarchies: TreeNode<Content>[]) => {
+        res.send(
+          renderHtml(
+            ContentTreePage,
+            "ConfCopier | Content",
+            {
+              contentTrees: hierarchies,
+            },
+            { contentTrees: hierarchies }
+          )
+        );
+      },
+      (reason) => {
+        res.status(500).send(`
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -69,8 +82,8 @@ router.get("/space/:spaceKey", (req, res) => {
 </body>
 </html>
 `);
-    }
-  );
+      }
+    );
 });
 
 router.post("/", (req, res) => {

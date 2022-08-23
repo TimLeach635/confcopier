@@ -1,20 +1,21 @@
 import React from "react";
 import { ContentTrees } from "./ContentTrees";
 import { Content } from "../../apiClients/confluence/content";
+import { TreeNode } from "../../util/tree";
 
 interface ContentTreePageProps {
-  rootContent: Content[];
+  contentTrees: TreeNode<Content>[];
 }
 
 export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({
-  rootContent,
+  contentTrees,
 }) => {
   return (
     <>
       <h1>Root Content</h1>
       <form method="post" action="/api/copy">
         <div id="content-tree-root">
-          <ContentTrees rootContent={rootContent} />
+          <ContentTrees contentTrees={contentTrees} />
         </div>
         <label htmlFor="other-confluence-url">
           Confluence URL to copy to:{" "}

@@ -147,14 +147,16 @@ export const searchContentByCql = async (
   confluence: Confluence,
   request: SearchContentByCqlRequest
 ): Promise<ContentArray> => {
+  const queryParams: any = Object(request);
+  if (request.cqlcontext !== undefined)
+    queryParams.cqlcontext = JSON.stringify(request.cqlcontext);
+  if (request.expand !== undefined)
+    queryParams.expand = request.expand.join(",");
+
   const response = await confluenceApiFetch(
     confluence,
     ["wiki", "rest", "api", "content", "search"],
-    {
-      ...request,
-      cqlcontext: JSON.stringify(request.cqlcontext),
-      expand: request?.expand?.join(","),
-    }
+    queryParams
   );
   if (!response.ok) {
     const body = await response.json();
@@ -201,6 +203,9 @@ export const createContent = async (
     {
       method: "POST",
       body: JSON.stringify(request),
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
   );
 

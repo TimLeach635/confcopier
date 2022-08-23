@@ -124,12 +124,12 @@ export const copyContent = async (
         };
       })
     );
+    logger.info(`Successfully copied all pages`);
   } catch (e) {
     logger.error(`Failed to copy pages`);
     logger.error(JSON.stringify(e, null, 2));
   }
 
-  logger.info(`Successfully copied all pages`);
   visualiseTreeArray(
     creationTrees,
     (item) => `${item.title} (${item._links.self})`

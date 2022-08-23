@@ -1,19 +1,20 @@
 import React from "react";
-import { ContentCard } from "./ContentCard";
+import { ContentTree } from "./ContentTree";
 import { Content } from "../../apiClients/confluence/content";
+import { TreeNode } from "../../util/tree";
 
 interface ContentTreeProps {
-  rootContent: Content[];
+  contentTrees: TreeNode<Content>[];
 }
 
 export const ContentTrees: React.FunctionComponent<ContentTreeProps> = ({
-  rootContent,
+  contentTrees,
 }) => {
   return (
-    <ul>
-      {rootContent.map((content) => (
-        <li key={content.id}>
-          <ContentCard content={content} />
+    <ul className="content-trees">
+      {contentTrees.map((contentTree) => (
+        <li key={contentTree.value.id}>
+          <ContentTree contentTree={contentTree} />
         </li>
       ))}
     </ul>

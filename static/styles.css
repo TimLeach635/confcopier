@@ -1,32 +1,13 @@
-div.content-card {
-    display: grid;
-    grid-template-columns: min-content auto min-content;
-    grid-template-rows: min-content auto;
-}
-
-div.content-card > input {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-}
-
-div.content-card > label {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-
-    margin: 0;
-}
-
-div.content-card > button {
-    grid-column: 3 / 4;
-    grid-row: 1 / 2;
-}
-
-div.content-card > ul {
-    grid-column: 1 / 4;
-    grid-row: 2 / 3;
+ul.content-trees {
     list-style: none;
-    padding: 0;
-    padding-left: 0.5em;
+    padding: 0 0 0 0.5em;
+    margin-left: 0.5em;
+    border-left: #ddd solid 2px;
+}
+
+ul.content-trees ul {
+    list-style: none;
+    padding: 0 0 0 0.5em;
     margin-left: 0.5em;
     border-left: #ddd solid 2px;
 }
