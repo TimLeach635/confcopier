@@ -5,6 +5,7 @@ import { Header } from "./components/header/Header";
 export const renderHtml = <T>(
   Body: React.FunctionComponent<T>,
   title: string,
+  isLoggedIn: boolean,
   props?: T,
   serverData?: any
 ): string => {
@@ -24,7 +25,7 @@ export const renderHtml = <T>(
   <script>globalThis.SERVER_DATA = ${JSON.stringify(serverData)}</script>
 </head>
 <body>
-  ${renderToString(React.createElement(Header))}
+  ${renderToString(React.createElement(Header, { isLoggedIn }))}
   ${renderToString(React.createElement(Body, props))}
 </body>
 </html>

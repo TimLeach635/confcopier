@@ -1,11 +1,17 @@
 import React from "react";
 import { Navbar } from "./Navbar";
 
-export const Header: React.FunctionComponent = () => {
+interface HeaderProps {
+  isLoggedIn: boolean;
+}
+
+export const Header: React.FunctionComponent<HeaderProps> = ({
+  isLoggedIn,
+}) => {
   return (
     <header>
       <span className="header-logo">ConfCopier - making conf copy!</span>
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn} />
     </header>
   );
 };

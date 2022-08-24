@@ -23,7 +23,7 @@ router.use((req, res, next) => {
   }
 
   if (!req.session?.confluence) {
-    res.send(renderHtml(LoginPage, "ConfCopier | Log In"));
+    res.send(renderHtml(LoginPage, "ConfCopier | Log In", false));
     res.end();
     return;
   }
@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
   getGlobalSpaces(req.session.confluence).then(
     (response) => {
       res.send(
-        renderHtml(SpaceListPage, "ConfCopier | Spaces", {
+        renderHtml(SpaceListPage, "ConfCopier | Spaces", true, {
           spaces: response.results,
         })
       );
@@ -62,6 +62,7 @@ router.get("/space/:spaceKey", (req, res) => {
           renderHtml(
             ContentTreePage,
             "ConfCopier | Content",
+            true,
             {
               contentTrees: hierarchies,
             },
@@ -91,6 +92,14 @@ router.post("/", (req, res) => {
     throw new Error("Cannot access session");
   }
   req.session.confluence = req.body;
+  res.redirect(303, "/");
+});
+
+router.post("/logout", (req, res) => {
+  if (!req.session) {
+    throw new Error("Cannot access session");
+  }
+  req.session.confluence = undefined;
   res.redirect(303, "/");
 });
 
