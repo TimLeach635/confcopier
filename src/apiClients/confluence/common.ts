@@ -1,6 +1,6 @@
 import fetch, { RequestInit, Response } from "node-fetch";
 import logger from "../../logging";
-import { Confluence } from "../../confluence";
+import { Confluence } from "../../auth";
 
 export const confluenceApiFetch = (
   confluence: Confluence,

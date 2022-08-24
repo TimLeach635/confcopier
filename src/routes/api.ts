@@ -1,5 +1,5 @@
 import express from "express";
-import { Confluence } from "../confluence";
+import { Confluence } from "../auth";
 import {
   copyContent,
   getChildPagesOfContent,

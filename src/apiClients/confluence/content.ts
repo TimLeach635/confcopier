@@ -1,4 +1,4 @@
-import { Confluence } from "../../confluence";
+import { Confluence } from "../../auth";
 import { confluenceApiFetch } from "./common";
 import logger from "../../logging";
 import { Space } from "./space";

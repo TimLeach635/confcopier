@@ -15,7 +15,7 @@ import {
   visualiseTreeArray,
 } from "../../util/tree";
 import logger from "../../logging";
-import { Confluence } from "../../confluence";
+import { Confluence } from "../../auth";
 import { confluenceApiFetch } from "../../apiClients/confluence/common";
 
 export const getContentDetails = async (

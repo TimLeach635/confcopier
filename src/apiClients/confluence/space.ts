@@ -1,6 +1,6 @@
 import { Content, ContentArray } from "./content";
 import { confluenceApiFetch } from "./common";
-import { Confluence } from "../../confluence";
+import { Confluence } from "../../auth";
 
 export interface Space {
   id: number;
