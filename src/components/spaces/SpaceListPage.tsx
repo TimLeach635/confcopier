@@ -1,5 +1,6 @@
 import React from "react";
 import { Space } from "../../apiClients/confluence/space";
+import { SpaceCard } from "./SpaceCard";
 
 interface SpaceListPageProps {
   spaces: Space[];
@@ -11,14 +12,10 @@ export const SpaceListPage: React.FunctionComponent<SpaceListPageProps> = ({
   return (
     <>
       <h1>Spaces</h1>
-      <ul>
+      <ul className="space-list">
         {spaces.map((space) => (
           <li key={space.key}>
-            <a href={`/space/${space.key}`}>
-              <h2>{space.name}</h2>
-            </a>
-            <p>Key: "{space.key}"</p>
-            <p>Type: "{space.type}"</p>
+            <SpaceCard space={space} />
           </li>
         ))}
       </ul>

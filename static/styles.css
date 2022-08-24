@@ -1,3 +1,7 @@
+body {
+    font-family: "Gill Sans MT", sans-serif;
+}
+
 ul.content-trees {
     list-style: none;
     padding: 0 0 0 0.5em;
@@ -10,4 +14,47 @@ ul.content-trees ul {
     padding: 0 0 0 0.5em;
     margin-left: 0.5em;
     border-left: #ddd solid 2px;
+}
+
+ul.space-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    align-content: space-between;
+    gap: 1em;
+}
+
+ul.space-list > li {
+    min-width: 15em;
+    width: 25vw;
+    max-width: 20em;
+}
+
+ul.space-list > li > .space-card {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.space-card {
+    border: grey solid 1px;
+    border-radius: 1em;
+    color: inherit;
+    padding: 1em;
+}
+
+a.space-card {
+    display: block;
+    text-decoration: none;
+}
+
+.space-card:hover {
+    background: #ddd;
+}
+
+.space-card > h2, .space-card > p {
+    margin: 0;
 }
