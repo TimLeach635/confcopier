@@ -17,18 +17,15 @@ export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({
         <div id="content-tree-root">
           <ContentTrees contentTrees={contentTrees} />
         </div>
-        <label htmlFor="other-confluence-url">
-          Confluence URL to copy to:{" "}
+        <label htmlFor="other-confluence-subdomain">
+          Destination Confluence subdomain: https://
+          <input
+            type="text"
+            id="other-confluence-subdomain"
+            name="destSubdomain"
+          />
+          .atlassian.net
         </label>
-        <input type="url" id="other-confluence-url" name="url" />
-        <label htmlFor="other-confluence-username">
-          Username for other Confluence:{" "}
-        </label>
-        <input type="text" id="other-confluence-username" name="username" />
-        <label htmlFor="other-confluence-password">
-          Password for other Confluence:{" "}
-        </label>
-        <input type="password" id="other-confluence-password" name="password" />
         <label htmlFor="other-confluence-space-key">
           Destination space key:{" "}
         </label>
@@ -39,7 +36,7 @@ export const ContentTreePage: React.FunctionComponent<ContentTreePageProps> = ({
         <input
           type="text"
           id="other-confluence-content-root"
-          name="destinationContentRoot"
+          name="destContentRoot"
         />
         <input type="submit" value="Copy" />
         <script src="/hydrateContentTree.js"></script>

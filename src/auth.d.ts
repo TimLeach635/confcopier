@@ -1,5 +1,8 @@
 export interface Confluence {
-  url: string;
-  username: string;
-  password: string;
+  subdomain: string;
+}
+
+export interface ApiAuthDetails {
+  email: string;
+  apiKey: string;
 }

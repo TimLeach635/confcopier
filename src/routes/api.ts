@@ -9,7 +9,11 @@ import { getSpaceRootContent } from "../apiClients/confluence/space";
 const router = express.Router();
 
 router.get("/space/:spaceKey/root-pages", (req, res) => {
-  getSpaceRootContent(req.session.confluence, req.params["spaceKey"]).then(
+  getSpaceRootContent(
+    { subdomain: req.session.confluences[0] },
+    { email: req.session.email, apiKey: req.session.apiKey },
+    req.params["spaceKey"]
+  ).then(
     (response) => {
       res.send(response.page.results);
     },
@@ -31,43 +35,37 @@ router.get("/space/:spaceKey/root-pages", (req, res) => {
 });
 
 router.get("/content/:contentId/children", (req, res) => {
-  getChildPagesOfContent(req.session.confluence, req.params["contentId"]).then(
-    (response) => {
-      res.send(response);
-    }
-  );
+  getChildPagesOfContent(
+    { subdomain: req.session.confluences[0] },
+    { email: req.session.email, apiKey: req.session.apiKey },
+    req.params["contentId"]
+  ).then((response) => {
+    res.send(response);
+  });
 });
 
 router.post("/copy", (req, res) => {
-  if (!req.session?.confluence) {
+  if (!req.session?.email || !req.session?.apiKey) {
     res.status(401).send("Not authorised to access this resource");
     return;
   }
 
   // Extract IDs of pages to copy
   const ids: string[] = Object.keys(req.body).filter(
-    (key) =>
-      ![
-        "url",
-        "username",
-        "password",
-        "spaceKey",
-        "destinationContentRoot",
-      ].includes(key)
+    (key) => !["destSubdomain", "spaceKey", "destContentRoot"].includes(key)
   );
 
   const destConfluence: Confluence = {
-    url: req.body.url,
-    username: req.body.username,
-    password: req.body.password,
+    subdomain: req.body.destSubdomain,
   };
 
   copyContent(
-    req.session.confluence,
+    { subdomain: req.session.confluences[0] },
     destConfluence,
+    { email: req.session.email, apiKey: req.session.apiKey },
     req.body.spaceKey,
     ids,
-    req.body.destinationContentRoot || undefined
+    req.body.destContentRoot || undefined
   ).then(
     (response) => {
       res.send(JSON.stringify(response));

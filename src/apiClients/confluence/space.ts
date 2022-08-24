@@ -1,6 +1,6 @@
 import { Content, ContentArray } from "./content";
 import { confluenceApiFetch } from "./common";
-import { Confluence } from "../../auth";
+import { ApiAuthDetails, Confluence } from "../../auth";
 
 export interface Space {
   id: number;
@@ -23,10 +23,12 @@ export interface SpaceContentResponse {
 }
 
 export const getGlobalSpaces = async (
-  confluence: Confluence
+  confluence: Confluence,
+  auth: ApiAuthDetails
 ): Promise<SpaceArray> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "space"],
     { type: "global" }
   );
@@ -38,10 +40,12 @@ export const getGlobalSpaces = async (
 };
 
 export const getSpaces = async (
-  confluence: Confluence
+  confluence: Confluence,
+  auth: ApiAuthDetails
 ): Promise<SpaceArray> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "space"],
     { type: "global" }
   );
@@ -54,10 +58,12 @@ export const getSpaces = async (
 
 export const getSpaceRootContent = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   spaceKey: string
 ): Promise<SpaceContentResponse> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "space", spaceKey, "content"],
     { depth: "root", expand: "children.page", limit: "1000" }
   );

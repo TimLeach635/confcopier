@@ -22,7 +22,7 @@ router.use((req, res, next) => {
     return;
   }
 
-  if (!req.session?.confluence) {
+  if (!req.session?.email || !req.session?.apiKey) {
     res.send(renderHtml(LoginPage, "ConfCopier | Log In", false));
     res.end();
     return;
@@ -32,7 +32,10 @@ router.use((req, res, next) => {
 });
 
 router.get("/", (req, res) => {
-  getGlobalSpaces(req.session.confluence).then(
+  getGlobalSpaces(
+    { subdomain: req.session.confluences[0] },
+    { email: req.session.email, apiKey: req.session.apiKey }
+  ).then(
     (response) => {
       res.send(
         renderHtml(SpaceListPage, "ConfCopier | Spaces", true, {
@@ -47,12 +50,20 @@ router.get("/", (req, res) => {
 });
 
 router.get("/space/:spaceKey", (req, res) => {
-  getSpaceRootContent(req.session.confluence, req.params["spaceKey"])
+  getSpaceRootContent(
+    { subdomain: req.session.confluences[0] },
+    { email: req.session.email, apiKey: req.session.apiKey },
+    req.params["spaceKey"]
+  )
     .then((response: SpaceContentResponse) => {
       const rootPages: Content[] = response.page.results;
       return Promise.all(
         rootPages.map((rootPage) =>
-          getWholeHierarchyFromParent(req.session.confluence, rootPage.id)
+          getWholeHierarchyFromParent(
+            { subdomain: req.session.confluences[0] },
+            { email: req.session.email, apiKey: req.session.apiKey },
+            rootPage.id
+          )
         )
       );
     })
@@ -91,7 +102,9 @@ router.post("/", (req, res) => {
   if (!req.session) {
     throw new Error("Cannot access session");
   }
-  req.session.confluence = req.body;
+  req.session.confluences = [req.body.subdomain];
+  req.session.email = req.body.email;
+  req.session.apiKey = req.body.apiKey;
   res.redirect(303, "/");
 });
 
@@ -100,6 +113,8 @@ router.post("/logout", (req, res) => {
     throw new Error("Cannot access session");
   }
   req.session.confluence = undefined;
+  req.session.email = undefined;
+  req.session.apiKey = undefined;
   res.redirect(303, "/");
 });
 

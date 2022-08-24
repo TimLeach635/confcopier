@@ -15,15 +15,17 @@ import {
   visualiseTreeArray,
 } from "../../util/tree";
 import logger from "../../logging";
-import { Confluence } from "../../auth";
+import { ApiAuthDetails, Confluence } from "../../auth";
 import { confluenceApiFetch } from "../../apiClients/confluence/common";
 
 export const getContentDetails = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   contentId: string
 ): Promise<Content> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", contentId],
     { expand: "space,children.page" }
   );
@@ -34,23 +36,25 @@ export const getContentDetails = async (
 
 export const getChildPagesOfContent = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   contentId: string
 ): Promise<Content[]> =>
-  getContentChildrenByType(confluence, contentId, "page").then(
+  getContentChildrenByType(confluence, auth, contentId, "page").then(
     (contentArray) => contentArray.results
   );
 
 export const getWholeHierarchyFromParent = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   parentContentId: string
 ): Promise<TreeNode<Content>> => {
-  const parent: Content = await getContentById(confluence, {
+  const parent: Content = await getContentById(confluence, auth, {
     id: parentContentId,
     expand: [],
   });
 
   return await generateTreeAsync<Content>(parent, (p) =>
-    getContentChildrenByType(confluence, p.id, "page", []).then(
+    getContentChildrenByType(confluence, auth, p.id, "page", []).then(
       (array) => array.results
     )
   );
@@ -59,12 +63,13 @@ export const getWholeHierarchyFromParent = async (
 export const copyContent = async (
   sourceConfluence: Confluence,
   destinationConfluence: Confluence,
+  auth: ApiAuthDetails,
   destinationSpaceKey: string,
   contentIds: string[],
   destinationParentId?: string
 ): Promise<Content[]> => {
   // Get all the content selected
-  const contentArray = await searchContentByCql(sourceConfluence, {
+  const contentArray = await searchContentByCql(sourceConfluence, auth, {
     cql: `id IN (${contentIds.join(",")})`,
     expand: ["space", "children.page", "ancestors", "body.storage"],
     limit: contentIds.length,
@@ -76,6 +81,7 @@ export const copyContent = async (
   if (destinationParentId !== undefined) {
     destinationParent = await getContentDetails(
       destinationConfluence,
+      auth,
       destinationParentId
     );
   }
@@ -91,7 +97,9 @@ export const copyContent = async (
         .includes(potentialChild.id)
   );
 
-  logger.info(`Attempting to copy content trees from ${sourceConfluence.url}:`);
+  logger.info(
+    `Attempting to copy content trees from ${sourceConfluence.subdomain}.atlassian.net:`
+  );
   visualiseTreeArray(contentTrees, (item) => item.title);
 
   let creationTrees: Tree<Content>[];
@@ -105,6 +113,7 @@ export const copyContent = async (
               if (prevOutput === undefined) {
                 return createContent(
                   destinationConfluence,
+                  auth,
                   nodeValue.title,
                   destinationSpaceKey,
                   nodeValue.body.storage.value
@@ -112,6 +121,7 @@ export const copyContent = async (
               } else {
                 return createContent(
                   destinationConfluence,
+                  auth,
                   nodeValue.title,
                   destinationSpaceKey,
                   nodeValue.body.storage.value,

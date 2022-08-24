@@ -1,23 +1,38 @@
 import fetch, { RequestInit, Response } from "node-fetch";
 import logger from "../../logging";
-import { Confluence } from "../../auth";
+import { ApiAuthDetails, Confluence } from "../../auth";
+import { UrlBuilder } from "http-url-builder";
+import { UrlParamBuilder } from "http-url-builder/dist/url-param-builder";
 
 export const confluenceApiFetch = (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   path: string[],
   queryParams?: any,
   init?: RequestInit
 ): Promise<Response> => {
-  let url = confluence.url + "/" + path.join("/");
+  let url = UrlBuilder.create(
+    `${confluence.subdomain}.atlassian.net`,
+    443,
+    true
+  );
 
-  if (queryParams) {
-    url += "?";
-    url += Object.keys(queryParams)
-      .map((key) => `${key}=${queryParams[key]}`)
-      .join("&");
+  for (const pathElement of path) {
+    url = url.addPath(pathElement);
   }
 
-  logger.http(`Making HTTP request to ${url}`);
+  let urlWithParams: UrlParamBuilder = url;
+
+  if (queryParams) {
+    for (const queryParamKey in queryParams) {
+      urlWithParams = urlWithParams.addQueryParam(
+        queryParamKey,
+        queryParams[queryParamKey]
+      );
+    }
+  }
+
+  logger.http(`Making HTTP request to ${urlWithParams.build()}`);
 
   if (init !== undefined) {
     logger.http(`Init object:`);
@@ -30,11 +45,9 @@ export const confluenceApiFetch = (
     headers: {
       ...init?.headers,
       "X-Atlassian-Token": "no-check",
-      Authorization: `Basic ${btoa(
-        `${confluence.username}:${confluence.password}`
-      )}`,
+      Authorization: `Basic ${btoa(`${auth.email}:${auth.apiKey}`)}`,
     },
   };
 
-  return fetch(url, modifiedInit);
+  return fetch(urlWithParams.build(), modifiedInit);
 };

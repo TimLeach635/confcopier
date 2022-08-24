@@ -5,27 +5,24 @@ export const LoginPage: React.FunctionComponent = () => {
     <>
       <h1>Log In</h1>
       <form method="post" action="/">
-        <label htmlFor="confluence-login-form-url">
-          Confluence page URL (domain, no trailing slash e.g.
-          "https://softwiretech.atlassian.net"
+        <label htmlFor="confluence-login-form-subdomain">
+          Confluence subdomain: https://
+          <input
+            type="text"
+            id="confluence-login-form-subdomain"
+            name="subdomain"
+          />
+          .atlassian.net
         </label>
-        <input type="url" id="confluence-login-form-url" name="url" />
-        <label htmlFor="confluence-login-form-username">
-          API username (in this case, the email you use to log in to Atlassian)
-        </label>
-        <input
-          type="text"
-          id="confluence-login-form-username"
-          name="username"
-        />
-        <label htmlFor="confluence-login-form-password">
-          API password (in this case, an API key that you must generate from
-          within Confluence)
+        <label htmlFor="confluence-login-form-email">Atlassian email: </label>
+        <input type="email" id="confluence-login-form-email" name="email" />
+        <label htmlFor="confluence-login-form-api-key">
+          Atlassian API key:{" "}
         </label>
         <input
           type="password"
-          id="confluence-login-form-password"
-          name="password"
+          id="confluence-login-form-api-key"
+          name="apiKey"
         />
         <input type="submit" value="Log In" />
       </form>

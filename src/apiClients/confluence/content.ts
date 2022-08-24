@@ -1,4 +1,4 @@
-import { Confluence } from "../../auth";
+import { ApiAuthDetails, Confluence } from "../../auth";
 import { confluenceApiFetch } from "./common";
 import logger from "../../logging";
 import { Space } from "./space";
@@ -95,10 +95,12 @@ export interface GetContentRequest {
 
 export const getContent = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   request?: GetContentRequest
 ): Promise<ContentArray> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content"],
     {
       ...request,
@@ -117,10 +119,12 @@ export interface GetContentByIdRequest {
 
 export const getContentById = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   request: GetContentByIdRequest
 ): Promise<Content> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", request.id],
     {
       expand: request.expand?.join(","),
@@ -145,6 +149,7 @@ export interface SearchContentByCqlRequest {
 
 export const searchContentByCql = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   request: SearchContentByCqlRequest
 ): Promise<ContentArray> => {
   const queryParams: any = Object(request);
@@ -155,6 +160,7 @@ export const searchContentByCql = async (
 
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", "search"],
     queryParams
   );
@@ -167,6 +173,7 @@ export const searchContentByCql = async (
 
 export const createContent = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   title: string,
   spaceKey: string,
   body: string,
@@ -187,17 +194,18 @@ export const createContent = async (
 
   if (parentId !== undefined) {
     logger.debug(
-      `Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}, as a child of page ${parentId}`
+      `Attempting to create page "${title}" in ${confluence.subdomain}.atlassian.net, space ${spaceKey}, as a child of page ${parentId}`
     );
     request.ancestors.push({ id: parentId });
   } else {
     logger.debug(
-      `Attempting to create page "${title}" in ${confluence.url}, space ${spaceKey}`
+      `Attempting to create page "${title}" in ${confluence.subdomain}.atlassian.net, space ${spaceKey}`
     );
   }
 
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content"],
     undefined,
     {
@@ -224,12 +232,14 @@ export const createContent = async (
 
 export const getContentChildrenByType = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   id: string,
   type: "page" | "comment" | "attachment",
   expand?: ContentExpandOption[]
 ): Promise<ContentArray> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", id, "child", type],
     {
       expand: expand?.join(","),
@@ -243,12 +253,14 @@ export const getContentChildrenByType = async (
 
 export const getContentDescendantsByType = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   id: string,
   type: "page" | "comment" | "attachment",
   expand?: ContentExpandOption[]
 ): Promise<ContentArray> => {
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", id, "descendant", type],
     {
       expand: expand?.join(","),
@@ -280,6 +292,7 @@ export interface LongTask {
 
 export const copyPageHierarchy = async (
   confluence: Confluence,
+  auth: ApiAuthDetails,
   request: CopyPageHierarchyRequest
 ): Promise<LongTask> => {
   const requestBody: any = {
@@ -293,6 +306,7 @@ export const copyPageHierarchy = async (
 
   const response = await confluenceApiFetch(
     confluence,
+    auth,
     ["wiki", "rest", "api", "content", request.id, "pagehierarchy", "copy"],
     undefined,
     {
@@ -305,6 +319,5 @@ export const copyPageHierarchy = async (
     const body = await response.json();
     throw new Error(`Fetch failed with error:\n${JSON.stringify(body)}`);
   }
-  const task: LongTask = (await response.json()) as LongTask;
-  return task;
+  return (await response.json()) as LongTask;
 };

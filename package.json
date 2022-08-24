@@ -22,6 +22,7 @@
     "cookie-session": "^2.0.0",
     "esbuild": "^0.14.51",
     "express": "^4.18.1",
+    "http-url-builder": "^1.1.0",
     "node-fetch": "^3.2.10",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
