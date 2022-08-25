@@ -11,6 +11,8 @@ import {
 import { Content } from "../apiClients/confluence/content";
 import { getWholeHierarchyFromParent } from "../services/confluence/contentService";
 import { TreeNode } from "../util/tree";
+import { Confluence } from "../auth";
+import { ConfluenceBrowserContainer } from "../components/confluenceBrowser/ConfluenceBrowserContainer";
 
 const router = express.Router();
 
@@ -46,6 +48,22 @@ router.get("/", (req, res) => {
     (reason) => {
       res.status(500).send(`<p>${reason}</p>`);
     }
+  );
+});
+
+router.get("/browser", (req, res) => {
+  const confluences: Confluence[] = req.session.confluences.map(
+    (subdomain) => ({ subdomain })
+  );
+
+  res.send(
+    renderHtml(
+      ConfluenceBrowserContainer,
+      "ConfCopier | Browser",
+      true,
+      { confluences },
+      { confluences }
+    )
   );
 });
 

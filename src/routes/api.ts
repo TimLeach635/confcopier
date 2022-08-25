@@ -4,7 +4,7 @@ import {
   copyContent,
   getChildPagesOfContent,
 } from "../services/confluence/contentService";
-import { getSpaceRootContent } from "../apiClients/confluence/space";
+import { getSpaceRootContent, getSpaces } from "../apiClients/confluence/space";
 
 const router = express.Router();
 
@@ -41,6 +41,17 @@ router.get("/content/:contentId/children", (req, res) => {
     req.params["contentId"]
   ).then((response) => {
     res.send(response);
+  });
+});
+
+router.get("/:subdomain/spaces", (req, res) => {
+  const subdomain: string = req.params["subdomain"];
+
+  getSpaces(
+    { subdomain },
+    { email: req.session.email, apiKey: req.session.apiKey }
+  ).then((spaceArray) => {
+    res.send(spaceArray.results);
   });
 });
 
