@@ -3,8 +3,11 @@ import { Confluence } from "../auth";
 import {
   copyContent,
   getChildPagesOfContent,
+  getWholeHierarchyFromParent,
 } from "../services/confluence/contentService";
 import { getSpaceRootContent, getSpaces } from "../apiClients/confluence/space";
+import { Content } from "../apiClients/confluence/content";
+import { TreeNode } from "../util/tree";
 
 const router = express.Router();
 
@@ -53,6 +56,32 @@ router.get("/:subdomain/spaces", (req, res) => {
   ).then((spaceArray) => {
     res.send(spaceArray.results);
   });
+});
+
+router.get("/:subdomain/spaces/:spaceKey/contentTrees", (req, res) => {
+  const subdomain: string = req.params["subdomain"];
+  const spaceKey: string = req.params["spaceKey"];
+
+  getSpaceRootContent(
+    { subdomain },
+    { email: req.session.email, apiKey: req.session.apiKey },
+    spaceKey
+  )
+    .then((response) => {
+      const rootContentArray: Content[] = response.page.results;
+      return Promise.all(
+        rootContentArray.map((rootContent) =>
+          getWholeHierarchyFromParent(
+            { subdomain },
+            { email: req.session.email, apiKey: req.session.apiKey },
+            rootContent.id
+          )
+        )
+      );
+    })
+    .then((contentTrees: TreeNode<Content>[]) => {
+      res.send(contentTrees);
+    });
 });
 
 router.post("/copy", (req, res) => {
