@@ -119,7 +119,7 @@ export const traversePromiseTree = async <T, U>(
 
 export const flatten = <T>(tree: TreeNode<T>): T[] => {
   const result: T[] = [tree.value];
-  [tree.value].push(...tree.children.flatMap(flatten));
+  result.push(...tree.children.flatMap(flatten));
 
   return result;
 };

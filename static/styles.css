@@ -58,3 +58,23 @@ a.space-card {
 .space-card > h2, .space-card > p {
     margin: 0;
 }
+
+.side-by-side-browser {
+    width: 100%;
+    display: flex;
+    gap: 1em;
+}
+
+.side-by-side-browser > div {
+    border: grey 1px solid;
+    border-radius: 1em;
+    width: calc(50% - (1em / 2));
+}
+
+.copy-candidate {
+    color: #4a4;
+}
+
+.copy-candidate.copy-candidate--invalid {
+    color: #f55;
+}

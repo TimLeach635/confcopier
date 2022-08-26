@@ -12,7 +12,7 @@ import { Content } from "../apiClients/confluence/content";
 import { getWholeHierarchyFromParent } from "../services/confluence/contentService";
 import { TreeNode } from "../util/tree";
 import { Confluence } from "../auth";
-import { ConfluenceBrowserContainer } from "../components/confluenceBrowser/ConfluenceBrowserContainer";
+import { SideBySideBrowserContainer } from "../components/confluenceBrowser/SideBySideBrowserContainer";
 
 const router = express.Router();
 
@@ -58,7 +58,7 @@ router.get("/browser", (req, res) => {
 
   res.send(
     renderHtml(
-      ConfluenceBrowserContainer,
+      SideBySideBrowserContainer,
       "ConfCopier | Browser",
       true,
       { confluences },

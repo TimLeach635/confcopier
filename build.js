@@ -20,6 +20,7 @@ esbuild
     entryPoints: [
       "src/browser/hydrateContentTree.tsx",
       "src/browser/hydrateConfluenceBrowser.tsx",
+      "src/browser/hydrateSideBySideBrowser.tsx",
     ],
     bundle: true,
     outdir: "dist/static",

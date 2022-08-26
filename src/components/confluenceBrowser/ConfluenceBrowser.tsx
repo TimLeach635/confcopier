@@ -11,15 +11,30 @@ import { Content } from "../../apiClients/confluence/content";
 import { TreeNode } from "../../util/tree";
 import { ContentTrees } from "../content/ContentTrees";
 
+export interface CopyCandidate {
+  content: Content;
+  destParentId: string;
+}
+
 interface ConfluenceBrowserProps {
   confluences: Confluence[];
+  copyCandidates?: CopyCandidate[];
+  addCopyCandidate?: (candidate: Content) => void;
+  removeCopyCandidate?: (candidateId: string) => void;
+  chooseCopyDestination?: (destinationId: string) => void;
 }
 
 type Level = "confluences" | "spaces" | "pages";
 
 export const ConfluenceBrowser: React.FunctionComponent<
   ConfluenceBrowserProps
-> = ({ confluences }) => {
+> = ({
+  confluences,
+  copyCandidates,
+  addCopyCandidate,
+  removeCopyCandidate,
+  chooseCopyDestination,
+}) => {
   const [level, setLevel] = useState<Level>("confluences");
   const [selectedSubdomain, setSelectedSubdomain] = useState<string>();
   const [spaces, setSpaces] = useState<Space[]>();
@@ -45,8 +60,19 @@ export const ConfluenceBrowser: React.FunctionComponent<
             [spaceKey]: contentTrees,
           };
         });
+        if (chooseCopyDestination !== undefined && contentTrees.length > 0) {
+          chooseCopyDestination(contentTrees[0].value.id);
+        }
       }
     );
+  };
+
+  const onContentSelect = (content: Content) => {
+    addCopyCandidate(content);
+  };
+
+  const onContentDeselect = (content: Content) => {
+    removeCopyCandidate(content.id);
   };
 
   switch (level) {
@@ -67,7 +93,12 @@ export const ConfluenceBrowser: React.FunctionComponent<
         return <p>Loading...</p>;
       }
       return (
-        <ContentTrees contentTrees={contentTreesBySpace[selectedSpaceKey]} />
+        <ContentTrees
+          contentTrees={contentTreesBySpace[selectedSpaceKey]}
+          onContentSelect={onContentSelect}
+          onContentDeselect={onContentDeselect}
+          copyCandidates={copyCandidates}
+        />
       );
   }
 };
